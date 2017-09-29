@@ -4,8 +4,8 @@ function LineObject(startPoint,endPoint){
 
 };
 LineObject.prototype.getDistanceFromLatLonInKm = function(point1,point2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(point2.lat-point1.lat);  // deg2rad below
+  var R = 6371; // bk trai dat (km)
+  var dLat = deg2rad(point2.lat-point1.lat);  
   var dLon = deg2rad(point2.lon-point1.lon); 
   var a = 
     Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -13,7 +13,7 @@ LineObject.prototype.getDistanceFromLatLonInKm = function(point1,point2) {
     Math.sin(dLon/2) * Math.sin(dLon/2)
     ; 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
+  var d = R * c; 
   return d;
 }
 
