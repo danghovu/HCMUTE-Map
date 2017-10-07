@@ -1,28 +1,35 @@
-function LineObject(startPoint,endPoint){
-	this.startPoint=startPoint; // theo vĩ độ , vĩ độ
-	this.endPoint=endPoint;   // theo vĩ độ , vĩ độ
-
+const PointObject= require('./PointObject.js');
+class LineObject{
+	constructor(){
+		this.startPoint = new PointObject({lon:arguments[0].startPoint.lon,lat:arguments[0].startPoint.lat});// theo vĩ độ , vĩ độ
+  		this.endPoint = new PointObject({lon:arguments[0].endPoint.lon,lat:arguments[0].endPoint.lat});// theo vĩ độ , vĩ độ
+	}
+  	getDistance (){
+	  //console.log(this.startPoint);
+		this.distance = this.startPoint.getDistanceFromLatLonInKm(this.endPoint);
+		return this.distance;
+	}
 };
-LineObject.prototype.getDistanceFromLatLonInKm = function(point1,point2) {
-  var R = 6371; // bk trai dat (km)
-  var dLat = deg2rad(point2.lat-point1.lat);  
-  var dLon = deg2rad(point2.lon-point1.lon); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(point1.lat)) * Math.cos(deg2rad(point2.lat)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; 
-  return d;
-}
 
-LineObject.prototype.deg2rad=function(deg) {
-  return deg * (Math.PI/180);
-}
-LineObject.prototype.getDistance = function(){
-	this.distance = this.getDistanceFromLatLonInKm(this.startPoint,this.endPoint);
-	return this.distance;
-};
+
+
+// function LineObject(){
+//   this.startPoint = new PointObject({lon:arguments[0].startPoint.lon,lat:arguments[0].startPoint.lat});// theo vĩ độ , vĩ độ
+//   this.endPoint = new PointObject({lon:arguments[0].endPoint.lon,lat:arguments[0].endPoint.lat});// theo vĩ độ , vĩ độ
+// };
+
+// LineObject.prototype.getDistance = function(){
+//   //console.log(this.startPoint);
+// 	this.distance = this.startPoint.getDistanceFromLatLonInKm(this.endPoint);
+// 	return this.distance;
+// };
+
+// function LineObject(startPoint,endPoint){
+//   this.startPoint = new PointObject(startPoint.lon,startPoint.lat);// theo vĩ độ , vĩ độ
+//   this.endPoint = new PointObject(endPoint.lon,endPoint.lat);// theo vĩ độ , vĩ độ
+//   // this.startPoint=startPoint; // theo vĩ độ , vĩ độ
+//   // this.endPoint=endPoint;   // theo vĩ độ , vĩ độ
+
+// };
 
 module.exports = LineObject;

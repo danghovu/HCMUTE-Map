@@ -5,3 +5,9 @@ body{
 	width: 100%;
 	height: 100%;
 }
+.selectBox{
+	background: 'white';
+	position: fixed;
+	top: 10px;
+	left: 50px;
+}
