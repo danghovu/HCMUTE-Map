@@ -13,6 +13,7 @@
     "express": "^4.15.4",
     "firebase": "^4.4.0",
     "firebase-admin": "^5.2.1",
+    "inspect": "0.0.2",
     "leaflet": "^1.2.0",
     "nodemon": "^1.12.1",
     "pg": "^7.3.0"

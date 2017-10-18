@@ -1,12 +1,13 @@
-var pg  			= require('pg');
-var express 		= require('express');
-var app 			= express();
-var PointObject 	= require('./models/PointObject');
-var LineObject  	= require('./models/LineObject');
-var BuildingObject  = require('./models/BuildingObject');
-var Dijkstra		= require('./my_modules/dijkstra');
-
-var firebase 		= require("firebase");
+var pg  					= require('pg');
+var express 				= require('express');
+var app 					= express();
+var PointObject 			= require('./models/PointObject');
+var LineObject  			= require('./models/LineObject');
+var BuildingObject  		= require('./models/BuildingObject');
+var SignLevelObject 		= require('./models/SignLevelObject');
+var CategoryContainerObject = require('./models/CategoryContainerObject');
+var Dijkstra				= require('./my_modules/dijkstra');		
+var firebase 				= require("firebase");
 
 
 var connectionString = "postgres://postgres:123456@localhost:5432/HCMUTE_Map";
@@ -44,70 +45,23 @@ pgClient.connect()
 .catch(e=>{console.log(e);});
 
 var selectQuery = "SELECT st_asgeojson(geom),name FROM public.line_test3 where name = 'Đường' or name ='Đường nội bộ' ";
-var selectQuery2 = "Select st_asgeojson(geom),name FROM public.polygon";
+var selectQuery2 = "Select id,st_asgeojson(geom) as coordinates,name,st_asgeojson(coordinate_center) as coordinate_center , sign FROM public.polygon order by sign";
+var selectQuery3 = "select * from public.sign_level order by category,sign";
+var selectQuery4= 'select * from public.category_container order by category';
 //point Array
 var pointArr = [];
 //line Array
 var lineArr=[];
+var roadArr=[]; // chỉ gồm các đường đi , không gồm các line tạo thành 1 tòa nhà
 //building array
 var buildingArr = [];
-// PointObject.prototype.getDistanceFromLatLonInKm = function(point2){
-// 	var a;
-// 	var totalX=Math.pow(this.lon-point2.lon,2);
-// 	var totalY=Math.pow(this.lat-point2.lat,2);
-// 	a=Math.sqrt(totalX+totalY);
-// 	return a;
-// }
-// var loadData = function(callback){
-// 	var point1 = new PointObject({lon:0,lat:0});
-// 	var point2 = new PointObject({lon:0,lat:3});
-// 	var point3 = new PointObject({lon:5,lat:0});
-// 	var point4 = new PointObject({lon:0,lat:-2});
-// 	var point5 = new PointObject({lon:7,lat:3});
-// 	var point6 = new PointObject({lon:5,lat:1});
-// 	var point7 = new PointObject({lon:6,lat:-2});
-// 	var point8 = new PointObject({lon:0,lat:6});
-// 	pointArr.push(point1,point2,point3,point4,point5,point6,point7,point8);
-// 	console.log(pointArr);
-// 	var line1 = new LineObject({startPoint:point1,endPoint:point2});
-// 	var line2 = new LineObject({startPoint:point1,endPoint:point3});
-// 	var line3 = new LineObject({startPoint:point1,endPoint:point4});
-
-// 	var line4 = new LineObject({startPoint:point2,endPoint:point3});
-
-// 	var line5 = new LineObject({startPoint:point2,endPoint:point5});
-// 	var line6 = new LineObject({startPoint:point3,endPoint:point6});
-// 	var line7 = new LineObject({startPoint:point4,endPoint:point6});
-// 	var line8 = new LineObject({startPoint:point5,endPoint:point6});
-// 	var line9 = new LineObject({startPoint:point5,endPoint:point8});
-// 	var line10 = new LineObject({startPoint:point6,endPoint:point7});
-// 	var line11 = new LineObject({startPoint:point6,endPoint:point8});
-// 	var line12 = new LineObject({startPoint:point7,endPoint:point8});
-// 	lineArr.push(line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12);
-// 	lineArr.forEach((item) => {
-// 	  showDistance(item);
-// 	  console.log(item);
-// 	  console.log("----------------");
-
-// 	})
-// 	var bd1 = new BuildingObject({LineObjects:[new LineObject({startPoint:point1,endPoint:point1})],name:'1',sign:null});
-// 	var bd2 = new BuildingObject({LineObjects:[new LineObject({startPoint:point2,endPoint:point2})],name:'2',sign:null});
-// 	var bd3 = new BuildingObject({LineObjects:[new LineObject({startPoint:point3,endPoint:point3})],name:'3',sign:null});
-// 	var bd4 = new BuildingObject({LineObjects:[new LineObject({startPoint:point4,endPoint:point4})],name:'4',sign:null});
-// 	var bd5 = new BuildingObject({LineObjects:[new LineObject({startPoint:point5,endPoint:point5})],name:'5',sign:null});
-// 	var bd6 = new BuildingObject({LineObjects:[new LineObject({startPoint:point6,endPoint:point6})],name:'6',sign:null});
-// 	var bd7 = new BuildingObject({LineObjects:[new LineObject({startPoint:point7,endPoint:point7})],name:'7',sign:null});
-// 	var bd8 = new BuildingObject({LineObjects:[new LineObject({startPoint:point8,endPoint:point8})],name:'8',sign:null});
-// 	buildingArr.push(bd1,bd2,bd3,bd4,bd5,bd6,bd7,bd8);
-// 	console.log(buildingArr);
-// 	callback();
-// }
-
-var path;
-var doDijkstra = function(){
-	var dijkstra = new Dijkstra(pointArr,lineArr,buildingArr);
-	dijkstra.dijkstra('Bãi giữ xe máy','Bãi giữ xe đạp');
-	path = dijkstra.getPath();
+var centerArr = []// bao gồm trung điểm của các tòa nhà
+var signLevelArr = [];
+var categoryContainerArr = [];
+var doDijkstra = function(sourceName,destinationName){
+	var path=[];
+	var dijkstra = new Dijkstra(pointArr,lineArr,roadArr,buildingArr);
+	path=dijkstra.run(sourceName,destinationName);
 	if(path){
 		console.log("path:");
 			path.forEach((item) => {
@@ -117,6 +71,7 @@ var doDijkstra = function(){
 	}else{
 		console.log("No way");
 	}
+	return path;
 }
 
 
@@ -180,7 +135,7 @@ pgClient.query(selectQuery,function(err,result){
 				//console.log(oneLine[j]);
 				let newPoint = new PointObject({lon:oneLine[j][0],lat:oneLine[j][1]});
 				// let newPoint = new PointObject(oneLine[j][0],oneLine[j][1]);
-				console.log(newPoint);
+				// console.log(newPoint);
 				oneLinePointArr.push(newPoint);
 				pointArr.push(newPoint);//Tập hợn tất cả các điểm trong csdl
 
@@ -196,7 +151,7 @@ pgClient.query(selectQuery,function(err,result){
 			for(let j = 0 ; j<oneLinePointArr.length-1;j++){
 				let newLine = new LineObject({startPoint:oneLinePointArr[j],endPoint:oneLinePointArr[j+1]});
 				lineArr.push(newLine);//Tập hợp tất cả các đường đoạn thẳng nhỏ nhất (có tọa độ 2 điểm đầu cuối)
-
+				roadArr.push(newLine);
 
 
 				//lưu các cạnh vào trong  firebase
@@ -209,7 +164,7 @@ pgClient.query(selectQuery,function(err,result){
 			}
 		}
 	}
-	console.log(lineArr);
+	// console.log(lineArr);
 });
 
 
@@ -222,8 +177,18 @@ pgClient.query(selectQuery2,function(err,result){
 	else{
 		for(var i = 0;i<result.rows.length;i++){
 			let buildingName = result.rows[i]['name']; // tên của tòa nhà
+			let buildingSign = result.rows[i]['sign'];
+			let buildingId = result.rows[i]['id'];
+			let center;
+			if(result.rows[i].coordinate_center)
+				center = {
+					lat:JSON.parse(result.rows[i].coordinate_center)['coordinates'][1],
+					lon:JSON.parse(result.rows[i].coordinate_center)['coordinates'][0]
+				};
+			else
+				center = null;
 			//console.log(buildingName);
-			let oneBuilding= JSON.parse(result.rows[i]['st_asgeojson'])['coordinates'][0][0];//giữ tọa độ của các điểm thuộc 1 tòa nhà
+			let oneBuilding= JSON.parse(result.rows[i]['coordinates'])['coordinates'][0][0];//giữ tọa độ của các điểm thuộc 1 tòa nhà
 			
 			let oneBuildingPointArr=[];//Tập hợp các diểm trên 1 toàn nhà
 			for(var j = 0 ; j<oneBuilding.length;j++){
@@ -258,10 +223,10 @@ pgClient.query(selectQuery2,function(err,result){
 				// 		console.log("completed");
 				// });
 			}
-			let newBuilding = new BuildingObject({LineObjects:oneBuildingLineArr,name:buildingName,sign:null});
+			let newBuilding = new BuildingObject({id:buildingId,LineObjects:oneBuildingLineArr,name:buildingName,sign:null,center:center,sign:buildingSign});
 			
 			buildingArr.push(newBuilding);
-
+			// console.log(buildingArr);
 
 
 			//luu cac toa nha vao firebase
@@ -274,16 +239,39 @@ pgClient.query(selectQuery2,function(err,result){
 			
 		}
 	}
-	console.log(buildingArr);
-	doDijkstra();
+	// console.log(buildingArr);
 });
+
+pgClient.query(selectQuery3,function(err,result){
+	if(err)
+		console.log(err);
+	else{
+		for(let i = 0 ; i <result.rows.length;i++){
+			let newSignLevelObj = new SignLevelObject({sign:result.rows[i].sign,level:result.rows[i].level,category:result.rows[i].category});
+			signLevelArr.push(newSignLevelObj);
+		}
+		// console.log(signLevelArr);
+	}
+})
+pgClient.query(selectQuery4,function(err,result){
+	if(err)
+		console.log(err);
+	else{
+		for(let i = 0 ; i <result.rows.length;i++){
+			let newCategoryContainerObj = new CategoryContainerObject({category:result.rows[i].category,container_id:result.rows[i].container_id});
+			categoryContainerArr.push(newCategoryContainerObj);
+		}
+		// console.log(categoryContainerArr);
+	}
+})
+
 function showDistance(item){
 	item.getDistance();
 }
 
 lineArr.forEach((item) => {
   showDistance(item);
-  console.log(item);
+//   console.log(item);
   console.log("----------------");
 
 })
@@ -291,10 +279,63 @@ lineArr.forEach((item) => {
 
 // console.log(lineArr);
 app.get('/json',function(req,res){
-	res.status(200).send([lineArr,pointArr,buildingArr,path]);
+	
+	res.status(200).send(JSON.stringify({lineArr:lineArr,pointArr:pointArr,buildingArr:buildingArr,relationArr:createRelationOfPolygon()}));
 	
 });
+function createRelationOfPolygon(){
+	let k =0;
+	let relationOfPolygonArr=[];
+	for(let i = 0 ; i<buildingArr.length;i++)
+	{
+		let relationOfPolygonObj ={}
 
+		let polygonObject={} ;
+		if(buildingArr[i].sign)
+			{
+				relationOfPolygonObj.sign=buildingArr[i].sign;
+				polygonObject.sign = buildingArr[i].sign;
+				relationOfPolygonObj.category=[];
+				let id = buildingArr[i].id;
+				for(let j = 0; j<categoryContainerArr.length;j++){
+					if(categoryContainerArr[j].container_id==id){
+
+						let category = categoryContainerArr[j].category;
+
+						let roomArr =[]
+						for(;k<signLevelArr.length;k++)
+						{
+							if(signLevelArr[k].category!=category)
+								break;
+							let roomObject={} ;
+							roomObject.sign=signLevelArr[k].sign;
+							roomObject.level = signLevelArr[k].level;
+							roomArr.push(roomObject);
+						}
+						relationOfPolygonObj.category.push({category:category,room:roomArr});
+					}
+				}
+				relationOfPolygonArr.push(relationOfPolygonObj);
+			}
+	}
+	return relationOfPolygonArr;
+}
+
+app.post('/dijkstra',function(req,res){
+	var body = "";
+	var jsonObj;
+	req.on('data', function (chunk) {
+	    body += chunk;
+	});
+	req.on('end', function () {
+	    jsonObj = JSON.parse(body);
+	    var path = doDijkstra(jsonObj.source,jsonObj.destination);
+	 	if(path)
+			res.status(200).send(JSON.stringify({path:path,success:true}));
+		else
+			res.status(200).send(JSON.stringify({path:path,success:false}));
+	})
+})
 app.get('/',function(req,res){
 	res.render('index');
 

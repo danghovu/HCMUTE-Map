@@ -12,9 +12,44 @@
 		
 	</head>
 	<body>
-		<div id="map">
+		<div id="container">
+			<div id='menu'>
+				<div>
+					<button class="choosen">From : </button>
+					<div class="sourceListContainer">
+						<ul class="source list">
+						<li>
+							<div class="category">cate</div>
+							<div class="sublist">
+								<div class="list_smaller">
+									<div class="category_smaller">??</div>
+									<div class="sublist_smaller">
+										<div >ababab</div>
+									</div>
+								</div>							
+								<div>abc</div>
+								<div>abc</div>
+							</div>
+						</li>
+				
+					</ul>
+					<button id="deleteSrcBtn" title="Xóa điểm đầu" disabled>X</button>
+					</div>
+					
+				</div>
+				<div>
+					<button id="destinationBtn">Chọn điểm đích</button> <input type="text" name="" value="abc" id="desInput" > <button id="deleteDesBtn" title="Xóa điểm đích" disabled>X</button>
+				</div>
+				<div id="submitDiv">
+					<button id="submitBtn" disabled>Tìm đường</button>
+				</div>
+			</div>
 			
-		</div>
+			<button id="deleteBtn" title="Xóa đường đã tìm" disabled>X</button>
 		
+			<div id="map">
+				
+			</div>
+		</div>	
 	</body>
 </html>
