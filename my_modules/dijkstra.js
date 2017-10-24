@@ -125,7 +125,7 @@ function Dijkstra(pointArr,lineArr,roadArr,buildingArr){
 			return -1;
 		var sourceArr =this.findNodeByName(sourceName);
 		
-		console.log(sourceArr);
+		// console.log(sourceArr);
 		// console.log("i:"+sourceArr.length);
 		var destinationArr = this.findNodeByName(destinationName);
 		
@@ -176,7 +176,11 @@ function Dijkstra(pointArr,lineArr,roadArr,buildingArr){
 					pathLength.push(distanceToThisNode.get(this.destination.id));
 					var newMap = new Map(nodeBeforeThisOne);
 					tempNodeArr.push(newMap);
+					console.log("Lengh:"+pathLength[j]);
+					console.log(this.getPath(sourceArr[i],destinationArr[j]));
+					console.log("=========================");
 				}
+
 				sourceDestinationCouple.push([this.source,this.destination]);
 			}			
 		}
@@ -196,7 +200,7 @@ function Dijkstra(pointArr,lineArr,roadArr,buildingArr){
 				minIndex=i;
 		}
 		nodeBeforeThisOne=tempNodeArr[minIndex];
-		console.log(nodeBeforeThisOne);
+		// console.log(nodeBeforeThisOne);
 		return this.getPath(sourceDestinationCouple[minIndex][0],sourceDestinationCouple[minIndex][1]);
 	}
 	this.coreDijkstra = function (source,des){
@@ -225,6 +229,7 @@ function Dijkstra(pointArr,lineArr,roadArr,buildingArr){
 		}
 		if(!doneSet.has(this.destination.id)) // không có đường đi nối 2 điểm
 			return null;
+		return true; // có tìm ra đường giữa 2 node
 	}
 	this.getPath=function(source,destination){		
 		var pointList=[];

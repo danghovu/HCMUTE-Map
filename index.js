@@ -48,6 +48,10 @@ var selectQuery = "SELECT st_asgeojson(geom),name FROM public.line_test3 where n
 var selectQuery2 = "Select id,st_asgeojson(geom) as coordinates,name,st_asgeojson(coordinate_center) as coordinate_center , sign FROM public.polygon order by sign";
 var selectQuery3 = "select * from public.sign_level order by category,sign";
 var selectQuery4= 'select * from public.category_container order by category';
+var selectQuery5 = `select * 
+					from public."relationView" 
+					where name != 'Bỏ' and name != 'Tòa nhà trung tâm' and name != 'ĐH Sư Phạm Kỹ Thuật TP.HCM'
+					order by containerSign,category,level,name`;
 //point Array
 var pointArr = [];
 //line Array
@@ -60,6 +64,9 @@ var signLevelArr = [];
 var categoryContainerArr = [];
 var doDijkstra = function(sourceName,destinationName){
 	var path=[];
+	if(sourceName==destinationName)
+		return 0;
+	console.log(sourceName+"-"+destinationName);
 	var dijkstra = new Dijkstra(pointArr,lineArr,roadArr,buildingArr);
 	path=dijkstra.run(sourceName,destinationName);
 	if(path){
@@ -68,10 +75,12 @@ var doDijkstra = function(sourceName,destinationName){
 	 
 	  		console.log(item);
 		});
+		return path;
 	}else{
 		console.log("No way");
+		return null;
 	}
-	return path;
+	
 }
 
 
@@ -252,7 +261,7 @@ pgClient.query(selectQuery3,function(err,result){
 		}
 		// console.log(signLevelArr);
 	}
-})
+});
 pgClient.query(selectQuery4,function(err,result){
 	if(err)
 		console.log(err);
@@ -263,8 +272,41 @@ pgClient.query(selectQuery4,function(err,result){
 		}
 		// console.log(categoryContainerArr);
 	}
-})
+});
+var relationArr=[];
+pgClient.query(selectQuery5,function(err,result){
+	for(let i =0 ; i < result.rows.length;i++){
+		var relationObj= {};
+		let curCategoryName ;
+		let curBuildingName =result.rows[i].name;
+		var relationObj={};
 
+		relationObj.name = result.rows[i].name ;
+		relationObj.sign = result.rows[i].containersign ;
+		relationObj.categories = [];
+		while(i < result.rows.length&&result.rows[i].name==curBuildingName){
+			
+			var categoryObj={};
+			categoryObj.room=[];
+			if(result.rows[i].category)
+			{
+				curCategoryName=result.rows[i].category;
+				categoryObj.category = curCategoryName;
+
+				while(result.rows[i].category===curCategoryName){
+					categoryObj.room.push({sign:result.rows[i].sign,level:result.rows[i].level})
+					i++;
+				}
+				i--;
+				relationObj.categories.push(categoryObj);
+			}
+			i++;
+		}
+		i--;
+		relationArr.push(relationObj);
+	}
+
+});
 function showDistance(item){
 	item.getDistance();
 }
@@ -279,8 +321,9 @@ lineArr.forEach((item) => {
 
 // console.log(lineArr);
 app.get('/json',function(req,res){
-	
-	res.status(200).send(JSON.stringify({lineArr:lineArr,pointArr:pointArr,buildingArr:buildingArr,relationArr:createRelationOfPolygon()}));
+	doDijkstra('Tòa nhà A3','Nhà xưởng');
+	// res.status(200).send(JSON.stringify({lineArr:lineArr,pointArr:pointArr,buildingArr:buildingArr,relationArr:createRelationOfPolygon()}));
+	res.status(200).send(JSON.stringify({lineArr:lineArr,pointArr:pointArr,buildingArr:buildingArr,relationArr:relationArr}));
 	
 });
 function createRelationOfPolygon(){
@@ -293,9 +336,10 @@ function createRelationOfPolygon(){
 		let polygonObject={} ;
 		if(buildingArr[i].sign)
 			{
+				relationOfPolygonObj.name = buildingArr[i].name;
 				relationOfPolygonObj.sign=buildingArr[i].sign;
 				polygonObject.sign = buildingArr[i].sign;
-				relationOfPolygonObj.category=[];
+				relationOfPolygonObj.categories=[];
 				let id = buildingArr[i].id;
 				for(let j = 0; j<categoryContainerArr.length;j++){
 					if(categoryContainerArr[j].container_id==id){
@@ -312,12 +356,13 @@ function createRelationOfPolygon(){
 							roomObject.level = signLevelArr[k].level;
 							roomArr.push(roomObject);
 						}
-						relationOfPolygonObj.category.push({category:category,room:roomArr});
+						relationOfPolygonObj.categories.push({category:category,room:roomArr});
 					}
 				}
 				relationOfPolygonArr.push(relationOfPolygonObj);
 			}
 	}
+	//console.log(relationOfPolygonArr);
 	return relationOfPolygonArr;
 }
 
@@ -330,11 +375,11 @@ app.post('/dijkstra',function(req,res){
 	req.on('end', function () {
 	    jsonObj = JSON.parse(body);
 	    var path = doDijkstra(jsonObj.source,jsonObj.destination);
-	 	if(path)
-			res.status(200).send(JSON.stringify({path:path,success:true}));
-		else
+	 	if(path == 0)
 			res.status(200).send(JSON.stringify({path:path,success:false}));
-	})
+		else
+			res.status(200).send(JSON.stringify({path:path,success:true}));
+	});
 })
 app.get('/',function(req,res){
 	res.render('index');

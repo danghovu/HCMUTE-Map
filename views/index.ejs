@@ -15,37 +15,57 @@
 		<div id="container">
 			<div id='menu'>
 				<div>
-					<button class="choosen">From : </button>
-					<div class="sourceListContainer">
+					<button id ='source' class="choosen">From : </button>
+					<div class="listContainer">
 						<ul class="source list">
 						<li>
-							<div class="category">cate</div>
-							<div class="sublist">
+							<div class="category haveChild">cate</div>
+							<div class="sublist ">
 								<div class="list_smaller">
 									<div class="category_smaller">??</div>
 									<div class="sublist_smaller">
 										<div >ababab</div>
 									</div>
 								</div>							
-								<div>abc</div>
+								
 								<div>abc</div>
 							</div>
 						</li>
-				
+						<li>
+							<div class="category">abc</div>
+						</li>
 					</ul>
-					<button id="deleteSrcBtn" title="Xóa điểm đầu" disabled>X</button>
+					<button id="deleteSrcBtn" title="Xóa điểm đầu">X</button>
 					</div>
 					
 				</div>
 				<div>
-					<button id="destinationBtn">Chọn điểm đích</button> <input type="text" name="" value="abc" id="desInput" > <button id="deleteDesBtn" title="Xóa điểm đích" disabled>X</button>
-				</div>
-				<div id="submitDiv">
-					<button id="submitBtn" disabled>Tìm đường</button>
+					<button id ='destination' class="choosen">To : </button>
+					<div class="listContainer">
+							<ul class="destination list">
+							<li>
+								<div class="category haveChild">cate</div>
+								<div class="sublist ">
+									<div class="list_smaller">
+										<div class="category_smaller">??</div>
+										<div class="sublist_smaller">
+											<div >ababab</div>
+										</div>
+									</div>							
+									
+									<div>abc</div>
+								</div>
+							</li>
+							<li>
+								<div class="category">abc</div>
+							</li>
+						</ul>
+						<button id="deleteDesBtn" title="Xóa điểm đích">X</button>
+					</div>
 				</div>
 			</div>
 			
-			<button id="deleteBtn" title="Xóa đường đã tìm" disabled>X</button>
+			<button id="deleteBtn" title="Xóa đường đã tìm" >X</button>
 		
 			<div id="map">
 				
