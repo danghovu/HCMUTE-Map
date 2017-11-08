@@ -4,4 +4,8 @@
   -Đặng Hồ Vũ - 15110152</br>
   -Nguyễn Thành Luân - 15110075
 </br>
-Kế hoạch 8 tuần : https://docs.google.com/document/d/1eLViqKmxCHiGHF_DVJQ2fbf2JQnkOBEAKEea5pSPPcU/edit
+File backup cơ sở dữ liệu : https://drive.google.com/open?id=1w7-QCKzWJf6ZvvjOD0z5ESg8zvZ0eWlI </br>
+
+Bìa tiểu luận : https://drive.google.com/open?id=1PGEjt37heKb0xqSB6smorWp_C_Taxb30 </br>
+Phần nội dung tiểu luận : https://drive.google.com/open?id=1nAhYqOSEWca6j9yqRZWcDjELRQtMmSBb </br>
+
