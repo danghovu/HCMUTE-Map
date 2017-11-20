@@ -7,7 +7,7 @@ var BuildingObject  		= require('./models/BuildingObject');
 var Dijkstra				= require('./my_modules/dijkstra');		
 
 
-var connectionString = "postgres://postgres:123456@localhost:5432/test";
+var connectionString = "postgres://postgres:123456@localhost:5432/HCMUTE_Map";
 var port = process.env.PORT || 4200; 
 
 
@@ -160,10 +160,10 @@ app.get('/dijkstra',function(req,res){
 	}
 	else if(path){
 		console.log("path:");
-		path.forEach((item) => {			 
+		path.path.forEach((item) => {			 
 		console.log(item);
 		})
-		res.status(200).send(JSON.stringify({path:path,success:true}));
+		res.status(200).send(JSON.stringify({path:path.path,length:Math.round(path.length*1000),success:true}));
 	}
 	else{
 		console.log("No way");

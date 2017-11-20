@@ -111,7 +111,7 @@ class Dijkstra{
 	}
 	run(sourceName,destinationName){
 		if(sourceName===destinationName)
-			return -1;
+			return 0;
 		else if((sourceName.toLowerCase()==='Tòa nhà A1'.toLowerCase() 
 			&&(/^tòa nhà a2|3|4|5$/.test(destinationName.toLowerCase())))
 			||((/^tòa nhà a2|3|4|5$/.test(sourceName.toLowerCase()))
@@ -163,7 +163,7 @@ class Dijkstra{
 					minIndex=i;
 			}
 			this.nodeBeforeThisOne=tempNodeArr[minIndex];
-			return this.getPath(this.sourceDestinationCouple[minIndex][0],this.sourceDestinationCouple[minIndex][1]);
+			return this.getPath(this.sourceDestinationCouple[minIndex][0],this.sourceDestinationCouple[minIndex][1],pathLength[minIndex]);
 		}
 		return null;
 	}
@@ -189,17 +189,18 @@ class Dijkstra{
 			return false;
 		return true; // có tìm ra đường giữa 2 node
 	}
-	getPath(source,destination){		
+	getPath(source,destination,length){		
 		var pointList=[];
 		var nodeID =this.nodeBeforeThisOne.get(destination.id);
 		pointList.push(destination);
+
 		while(nodeID!==source.id){
 			
 			pointList.push(this.idToNode.get(nodeID));
 			nodeID=this.nodeBeforeThisOne.get(nodeID);
 		}
 		pointList.push(source);
-		return pointList.reverse();
+		return {path:pointList.reverse(),length:length};
 	}
 
 }

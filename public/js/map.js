@@ -7,6 +7,8 @@ $(document).ready(function() {
 	var drewPopup=[];
 	var srcName ;
 	var desName ; 
+
+	
 	map = new L.map('map',{zoomControl: false}).setView([10.85205,106.77171],19);
 
 	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { 
@@ -33,7 +35,6 @@ $(document).ready(function() {
 		result = JSON.parse(result)
 		buildingArr=result.buildingArr;
 		relationArr=result.relationArr;
-		console.log(relationArr);
 		buildingArr.forEach((item) => {
 		  // Todo...
 		  drawBuildingOutline({containerName:item.name},1);
@@ -47,7 +48,8 @@ $(document).ready(function() {
 			destinationBtn.text('To : ');
 			map.closePopup(drewPopup[0]);
 			map.closePopup(drewPopup[1]);
-			removeDrewRoute()
+			removeDrewRoute();
+			$('#distance').removeClass('visible');
 		});
 		deleteSrcBtn.addEventListener('click',function(){
 			if(drewBuilding[0]){
@@ -56,6 +58,7 @@ $(document).ready(function() {
 				map.removeLayer(drewBuilding[0]);
 				drewBuilding[0]=null;
 				map.closePopup(drewPopup[0]);
+				$('#distance').removeClass('visible');
 			}
 		});
 		deleteDesBtn.addEventListener('click',function(){
@@ -67,6 +70,7 @@ $(document).ready(function() {
 				map.removeLayer(drewBuilding[1]);
 				drewBuilding[1]=null;
 				map.closePopup(drewPopup[1]);
+				$('#distance').removeClass('visible');
 			}
 		});
 	});
@@ -88,10 +92,8 @@ $(document).ready(function() {
 			}
 		}
 		function removeDrewBuilding(index){
-			console.log("Index :"+drewBuilding[index]);
 			if(drewBuilding[index])
 			{
-				console.log("here");
 				map.removeLayer(drewBuilding[index]);
 				drewBuilding[index]=null;
 				if(index)
@@ -109,7 +111,7 @@ $(document).ready(function() {
 				weight: 2,
 				opacity: 1,
 				smoothFactor: 1,
-				dashArray: '10,10'
+				dashArray: '10,10',
 			});
 			polyline.addTo(map);
 			
@@ -132,7 +134,6 @@ $(document).ready(function() {
 					}
 
 					coordinate_center=buildingArr[i].center;
-					console.log(buildingArr[i].center);
 				}
 			}
 			if(pointList.length===0)
@@ -161,7 +162,6 @@ $(document).ready(function() {
 				return polygon;
 			}
 			else if(buildingObject.containerName!=='Bỏ'){ 
-				console.log(coordinate_center);
 				var content;
 				var polygon = new L.Polygon(pointList,{
 					fillColor:'green',
@@ -281,6 +281,8 @@ $(document).ready(function() {
 			removeDrewLine();//xóa đường nối giữa 2 địa điểm trước , không làm gì nếu chưa chọn xong 2 điểm
 			if(returnObject.polygon && !isDes)
 			{
+				if(drewPopup[0])
+					map.closePopup(drewPopup[0]);
 				removeDrewBuilding(0);
 				srcName=popupContentObj.containerName;
 				drewBuilding[0]=returnObject.polygon;
@@ -291,6 +293,8 @@ $(document).ready(function() {
 					sourceBtn.text("From : "+popupContentObj.containerName);
 			}
 			else if (returnObject.polygon && isDes) {
+				if(drewPopup[1])
+					map.closePopup(drewPopup[1]);
 				removeDrewBuilding(1);
 				desName=popupContentObj.containerName;
 				drewBuilding[1]=returnObject.polygon;
@@ -321,10 +325,16 @@ $(document).ready(function() {
 								for(var i = 0;i<path.length-1;i++){
 									drewLine.push(drawLine(path[i],path[i+1]));
 								}
-							}					
+							$('#distance').text(`Khoảng cách : ${res.length}m`).addClass('visible');
+							}
+
 						}
 						else if(!res.success && res.err==2)
 							alert(res.msg);
+						else if(!res.success && res.err==1)
+							$('#distance').text(`Khoảng cách : ~0m`).addClass('visible');
+						else 
+							$('#distance').removeClass('visible');
 				},
 				error: function (){
 					alert('Server có vấn đề');

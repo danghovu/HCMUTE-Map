@@ -88,20 +88,20 @@ ul li.open{
 	text-align: center;
 }
 #menu div.category.haveChild{
-	background-color: #757e8e;
+	background-color: #0D47A1;
 	cursor: pointer;
 	color: white;
 	font-size: 1.2em;
 }
 div.sublist div{
-	border-bottom: 1px solid #757e8e;
+	border-bottom: 1px solid #90CAF9;
 }
 .sublist  {
 	display: none;
 }
 .sublist div{
 	cursor: pointer;
-	background-color: #929caf;
+	background-color: #1E88E5;
 	color: white;
 
 }
@@ -110,8 +110,8 @@ div.sublist div{
 }
 
 #menu div .sublist .sublist_smaller div{
-	background-color: #bcc6d8;
-	color: white;
+	background-color: #90CAF9;
+	color: black;
 	font-weight: normal;
 	font-size: 0.9em;
 }
@@ -125,9 +125,17 @@ div.sublist_smaller.open{
 	display: block;
 }
 div.category{
-	background-color: #bcc6d8;
-	color: white;
+	background-color: #90CAF9;
+	color: black;
 	font-weight: normal;
 	cursor: pointer;
 	font-size: 1.2em;
+}
+#distance{
+	visibility: hidden;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+#distance.visible{
+	visibility: visible;
 }
