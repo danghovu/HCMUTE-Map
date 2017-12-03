@@ -181,8 +181,9 @@ class Dijkstra{
 		{
 			let minNode = this.findMinDistanceToNeighbor(this.unDoneSet);					
 			this.unDoneSet.delete(minNode.id);
-			this.calcNeighbors(minNode);
 			this.doneSet.add(minNode.id);
+			this.calcNeighbors(minNode);
+			
 
 		}
 		if(!this.doneSet.has(this.destination.id)) // không có đường đi nối 2 điểm
