@@ -158,7 +158,27 @@ $(document).ready(function() {
 					polygon.setStyle({fillColor:'#D9D0C9',
 					color:'#CABEB2'})
 				}
-				polygon.bindPopup(buildingObject.containerName).addTo(map);
+				// polygon.bindPopup(buildingObject.containerName).addTo(map);
+				var popup = L.popup()
+					.setLatLng([coordinate_center.lat,coordinate_center.lon])
+					.setContent(buildingObject.containerName);
+				polygon.on('mouseover',(e)=>{
+					popup.openOn(map);
+				});
+				polygon.on('mouseout',(e)=>{
+					map.closePopup();
+				});
+				polygon.on('click',(e)=>{
+					
+					let isDes;
+					if(sourceBtn.text()=='From : ')
+						isDes=0;
+					else if(destinationBtn.text()=='To : ')
+						isDes=1;
+					handleClickDiv(buildingObject,isDes);
+				});
+				polygon.addTo(map);
+
 				return polygon;
 			}
 			else if(buildingObject.containerName!=='Bỏ'){ 
@@ -186,9 +206,16 @@ $(document).ready(function() {
 					.setLatLng([coordinate_center.lat,coordinate_center.lon])
 					.setContent(content);
 				popup.openOn(map);
-				polygon.on('click',(e)=>{
+				polygon.on('mouseover',(e)=>{
 					popup.openOn(map);
 				});
+				polygon.on('mouseout',(e)=>{
+					map.closePopup();
+				});
+
+				// polygon.on('click',(e)=>{
+				// 	popup.openOn(map);
+				// });
 				return {polygon:polygon,popup:popup};
 			}		
 			else{ // vẽ những phần cần che
