@@ -112,12 +112,14 @@ class Dijkstra{
 	run(sourceName,destinationName){
 		if(sourceName===destinationName)
 			return 0;
-		else if((sourceName.toLowerCase()==='Tòa nhà A1'.toLowerCase() 
+		else if((sourceName.toLowerCase()==='tòa nhà a1'.toLowerCase() 
 			&&(/^tòa nhà a2|3|4|5$/.test(destinationName.toLowerCase())))
-			||((/^tòa nhà a2|3|4|5$/.test(sourceName.toLowerCase()))
-			)&&destinationName.toLowerCase()==='Tòa nhà A1'.toLowerCase())
+			||(((/^tòa nhà a2|3|4|5$/.test(sourceName.toLowerCase()))
+			)&&destinationName.toLowerCase()==='tòa nhà a1'.toLowerCase())||
+			(sourceName.toLowerCase()==='tòa nhà a10'.toLowerCase()&&destinationName.toLowerCase()==='P.QT&QLDA'.toLowerCase())
+			||(sourceName.toLowerCase()==='P.QT&QLDA'.toLowerCase()&&destinationName.toLowerCase()==='tòa nhà a10'.toLowerCase()))
 			{
-				return 1;// chỉ trong trường hợp các tóa nhà a1 a2 a3 a4 a5
+				return 1;// chỉ trong trường hợp các tóa nhà sát cạnh nhau
 			}
 		var sourceArr =this.findNodeByName(sourceName);
 		

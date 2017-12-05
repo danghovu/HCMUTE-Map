@@ -21,7 +21,7 @@ var pgClient = new pg.Client(connectionString);
 pgClient.connect()
 .catch(e=>{console.log(e);});
 
-var selectQuery = "SELECT st_asgeojson(geom),name FROM public.line_test3 ";
+var selectQuery = "SELECT st_asgeojson(geom),name FROM public.line ";
 var selectQuery2 = "Select id,st_asgeojson(geom) as coordinates,name,st_asgeojson(coordinate_center) as coordinate_center , sign FROM public.polygon order by sign";
 var selectQuery3 = `select * 
 					from public."relationView" 

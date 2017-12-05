@@ -7,7 +7,7 @@ $(document).ready(function() {
 	var drewPopup=[];
 	var srcName ;
 	var desName ; 
-
+	var toggleClickDirectly=false;
 	
 	map = new L.map('map',{zoomControl: false}).setView([10.85205,106.77171],19);
 
@@ -169,13 +169,15 @@ $(document).ready(function() {
 					map.closePopup();
 				});
 				polygon.on('click',(e)=>{
+
 					
-					let isDes;
 					if(sourceBtn.text()=='From : ')
-						isDes=0;
+						toggleClickDirectly=false;
 					else if(destinationBtn.text()=='To : ')
-						isDes=1;
-					handleClickDiv(buildingObject,isDes);
+						toggleClickDirectly=true;
+					else toggleClickDirectly=!toggleClickDirectly;
+					console.log("toggleClickDirectly"+toggleClickDirectly);
+					handleClickDiv(buildingObject,toggleClickDirectly);
 				});
 				polygon.addTo(map);
 
