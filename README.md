@@ -7,5 +7,5 @@
 File backup cơ sở dữ liệu : https://drive.google.com/open?id=11BRYRT-akY0_VzCjHNC71HHB49MUravY </br>
 
 Bìa tiểu luận : https://drive.google.com/open?id=1PGEjt37heKb0xqSB6smorWp_C_Taxb30 </br>
-Phần nội dung tiểu luận : https://drive.google.com/open?id=1gKOH0QQfieByKS61_5oQlYxzdXTzInmG </br>
+Phần nội dung tiểu luận : https://drive.google.com/open?id=18cXVQruczxVuxVwMAsdevONFjE9diMZz </br>
 
